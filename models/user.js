@@ -1,6 +1,15 @@
+const mongoose = require('mongoose');
 
-git init
-git add .
-git commit -m "created the server file"
-git remote add origin https://github.com/offozoremmanuel/NEW_AGE.git
-git push -u origin master
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  }
+}, { timestamps: true });
+
+module.exports = mongoose.model('costomer', userSchema);
