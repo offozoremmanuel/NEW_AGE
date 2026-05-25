@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-
+const cors =require('cors');
 const PORT = process.env.PORT || 6677;
 const customerRoute = require('./routes/customer');
 const orderRouter = require('./routes/order')
@@ -11,7 +11,7 @@ const cart = require('./routes/cart')
 const paymentRoutes = require('./routes/payment')
 const {passport} = require('./middleware/passport')
 const expressSession = require('express-session')
-const cors = require('cors');
+
 
 const app = express();
 app.use(express.json());
@@ -82,7 +82,7 @@ const swaggerDefinition = {
 
     servers: [
     {
-      url: 'http://localhost:6677',
+      url: 'https://new-age-3mtc.onrender.com',
       description: 'Development server',
     },
   ],

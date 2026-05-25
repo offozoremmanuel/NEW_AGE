@@ -1,6 +1,6 @@
 const Product = require('../models/product');
 const fs = require('fs')
-const cloudinary = require('../Middleware/cloudinary')
+const cloudinary = require('../middleware/cloudinary')
 const categoryModel = require('../models/category')
 
 exports.createProduct = async (req, res) => {
