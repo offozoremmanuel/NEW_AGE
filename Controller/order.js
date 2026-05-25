@@ -2,11 +2,15 @@ const Order = require('../models/order');
 const Product = require('../models/product');
 const axios = require('axios');
 const otpGen = require('otp-generator');
-const reference = otpGen.generate(6, { digits: true, upperCaseAlphabets: false, lowerCaseAlphabets: false, specialChars: false });
 
+const reference = otpGen.generate(6, {
+    digits: true,
+    upperCaseAlphabets: false,
+    lowerCaseAlphabets: false,
+    specialChars: false
+});
 
-exports.createOrder = createOrder = async (req, res) => {
-
+exports.createOrder = async (req, res) => {
     try {
 
         const {
@@ -19,12 +23,13 @@ exports.createOrder = createOrder = async (req, res) => {
         let totalPrice = 0;
 
         const orderedProducts = [];
-            const product = await Product.findById(
-                item.productId
-            );
+
+        // LOOP THROUGH PRODUCTS
+        for (const item of products) {
+
+            const product = await Product.findById(item.productId);
 
             if (!product) {
-
                 return res.status(404).json({
                     message: 'Product not found'
                 });
@@ -32,52 +37,48 @@ exports.createOrder = createOrder = async (req, res) => {
 
             totalPrice += product.productPrice * item.quantity;
 
-
             orderedProducts.push({
-
                 productId: product._id,
-
                 quantity: item.quantity,
-
                 price: product.productPrice
             });
+        }
 
-        // create order
-        exports.placeOrder = await Order.create({
-
+        // CREATE ORDER
+        const placeOrder = await Order.create({
             customerId,
-
+            email,
             products: orderedProducts,
-
             totalPrice,
-
-            deliveryAddress
+            deliveryAddress,
+            reference
         });
 
-
-
-
-        // initialize korapay payment
-          const payload = {
-            amount: menu.amount * quantity,
+        // INITIALIZE KORAPAY PAYMENT
+        const payload = {
+            amount: totalPrice,
             customer: {
-                email: user.email,
-                name: user.firstName + " " + user.lastName
+                email: email
             },
-            redirect_url: 'http://localhost:6677/api/order',
+            redirect_url: 'http://localhost:6677/api/v1/order/verify-payment',
             currency: 'NGN',
             reference: reference
         };
-        const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', payload, {
-            headers: {
-                Authorization:  `Bearer ${process.env.KORA_SK}`
-            }
-        });
-        res.status(201).json({
 
+        const { data } = await axios.post(
+            'https://api.korapay.com/merchant/api/v1/charges/initialize',
+            payload,
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.KORA_SK}`
+                }
+            }
+        );
+
+        res.status(201).json({
             message: 'Order created successfully',
-            data: order,
-            paymentLink: payment.data.data.checkout_url
+            data: placeOrder,
+            paymentLink: data.data.checkout_url
         });
 
     } catch (error) {
@@ -90,7 +91,9 @@ exports.createOrder = createOrder = async (req, res) => {
 
 exports.verifyPayment = async (req, res, next) => {
     try {
+
         const { reference } = req.query;
+
         const order = await Order.findOne({
             reference
         });
@@ -98,101 +101,47 @@ exports.verifyPayment = async (req, res, next) => {
         if (!order) {
             return res.status(404).json({
                 message: 'Order not found'
-            })
-        };
+            });
+        }
 
-        const { data } = await axios.get(`https://api.korapay.com/merchant/api/v1/charges/${reference}`,
+        const { data } = await axios.get(
+            `https://api.korapay.com/merchant/api/v1/charges/${reference}`,
             {
                 headers: {
-                Authorization: `Bearer ${process.env.KORA_SK}`
-            }}
+                    Authorization: `Bearer ${process.env.KORA_SK}`
+                }
+            }
         );
 
-        console.log(data);
-
         if (data.status === true && data.data.status === 'processing') {
-            order.status = 'processing'
+
+            order.status = 'processing';
+
             await order.save();
-           return res.status(200).json({
-            message: 'Payment is being processed',
-            status: 'processing'
-           })
-        };
+
+            return res.status(200).json({
+                message: 'Payment is being processed',
+                status: 'processing'
+            });
+        }
 
         if (data.status === true && data.data.status === 'success') {
-            order.status = 'successful'
+
+            order.status = 'successful';
+
             await order.save();
-           return res.status(200).json({
-            message: 'Payment successful',
-            status: 'successful'
-           })
-        };
+
+            return res.status(200).json({
+                message: 'Payment successful',
+                status: 'successful'
+            });
+        }
+
     } catch (error) {
+
         next({
-                message: error.message,
-                statusCode: 500
-            })
+            message: error.message,
+            statusCode: 500
+        });
     }
-}
-
-
-
-// const customerModel = require('../models/customer');
-// const orderModel = require('../models/order');
-// const otpGen = require('otp-generator');
-
-// const axios = require('axios');
-
-// exports.placeOrder = async (req, res, next) => {
-//     try {
-//         console.log("request ip: ",req.socket)
-//         const { id } = req.user;
-//         const { menuId } = req.params;
-//         const { quantity } = req.body;
-//         const user = await userModel.findById(id);
-//         console.log("my user: ", user)
-//         const menu = await menuModel.findById(menuId);
-
-//         if (!user) {
-//             return next({
-//                 message: `User not found`,
-//                 statusCode: 404
-//             })
-//         };
-
-//         if (!menu) {
-//             return next({
-//                 message: `Menu not found`,
-//                 statusCode: 404
-//             })
-//         };
-
-      
-
-        
-
-//         console.log(data)
-
-//         const order = new orderModel({
-//             ProductId : menu.restaurantId,
-//             userId: user._id,
-//             menuId: menu._id,
-//             quantity,
-//             total: menu.amount * quantity,
-//             reference: data.data.reference
-//         });
-
-//         await order.save();
-
-//        return res.status(201).json({
-//         message: 'Order placed successfully',
-//         data: order
-//        })
-//     } catch (error) {
-//         // console.log(error)
-//       return res.status(500).json({
-//             message: error.message
-//          })
-//     }
-// };
-
+};
