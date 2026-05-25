@@ -80,7 +80,7 @@ const swaggerDefinition = {
 
     servers: [
     {
-      url: 'http://localhost:6677',
+      url: 'https://new-age-3mtc.onrender.com',
       description: 'Development server',
     },
   ],
