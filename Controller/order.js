@@ -70,7 +70,7 @@ exports.createOrder = createOrder = async (req, res) => {
         };
         const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', payload, {
             headers: {
-                Authorization:  `Bearer ${process.env.KORA_SK}`
+                Authorization:  `Bearer ${process.env.KORA_API_KEY}`
             }
         });
         res.status(201).json({
@@ -104,7 +104,7 @@ exports.verifyPayment = async (req, res, next) => {
         const { data } = await axios.get(`https://api.korapay.com/merchant/api/v1/charges/${reference}`,
             {
                 headers: {
-                Authorization: `Bearer ${process.env.KORA_SK}`
+                Authorization: `Bearer ${process.env.KORA_API_KEY}`
             }}
         );
 
@@ -134,65 +134,4 @@ exports.verifyPayment = async (req, res, next) => {
             })
     }
 }
-
-
-
-// const customerModel = require('../models/customer');
-// const orderModel = require('../models/order');
-// const otpGen = require('otp-generator');
-
-// const axios = require('axios');
-
-// exports.placeOrder = async (req, res, next) => {
-//     try {
-//         console.log("request ip: ",req.socket)
-//         const { id } = req.user;
-//         const { menuId } = req.params;
-//         const { quantity } = req.body;
-//         const user = await userModel.findById(id);
-//         console.log("my user: ", user)
-//         const menu = await menuModel.findById(menuId);
-
-//         if (!user) {
-//             return next({
-//                 message: `User not found`,
-//                 statusCode: 404
-//             })
-//         };
-
-//         if (!menu) {
-//             return next({
-//                 message: `Menu not found`,
-//                 statusCode: 404
-//             })
-//         };
-
-      
-
-        
-
-//         console.log(data)
-
-//         const order = new orderModel({
-//             ProductId : menu.restaurantId,
-//             userId: user._id,
-//             menuId: menu._id,
-//             quantity,
-//             total: menu.amount * quantity,
-//             reference: data.data.reference
-//         });
-
-//         await order.save();
-
-//        return res.status(201).json({
-//         message: 'Order placed successfully',
-//         data: order
-//        })
-//     } catch (error) {
-//         // console.log(error)
-//       return res.status(500).json({
-//             message: error.message
-//          })
-//     }
-// };
 
