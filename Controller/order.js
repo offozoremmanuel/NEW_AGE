@@ -1,11 +1,19 @@
 const Order = require('../models/order');
 const Product = require('../models/product');
+const customerModel = require('../models/customer');
 const axios = require('axios');
 const otpGen = require('otp-generator');
-const reference = otpGen.generate(6, { digits: true, upperCaseAlphabets: false, lowerCaseAlphabets: false, specialChars: false });
 
+const generateReference = () => {
+    return `ORDER-${Date.now()}-${otpGen.generate(6, {
+        digits: true,
+        upperCaseAlphabets: false,
+        lowerCaseAlphabets: false,
+        specialChars: false
+    })}`;
+};
 
-exports.createOrder = createOrder = async (req, res) => {
+exports.createOrder = async (req, res) => {
 
     try {
 
@@ -16,9 +24,24 @@ exports.createOrder = createOrder = async (req, res) => {
             deliveryAddress
         } = req.body;
 
+        if (!customerId || !email || !products || !Array.isArray(products) || products.length === 0 || !deliveryAddress) {
+            return res.status(400).json({
+                message: 'customerId, email, products, and deliveryAddress are required'
+            });
+        }
+
+        const customer = await customerModel.findById(customerId);
+
+        if (!customer) {
+            return res.status(404).json({
+                message: 'Customer not found'
+            });
+        }
+
         let totalPrice = 0;
 
         const orderedProducts = [];
+        for (const item of products) {
             const product = await Product.findById(
                 item.productId
             );
@@ -41,9 +64,11 @@ exports.createOrder = createOrder = async (req, res) => {
 
                 price: product.productPrice
             });
+        }
 
         // create order
-        exports.placeOrder = await Order.create({
+        const reference = generateReference();
+        const order = await Order.create({
 
             customerId,
 
@@ -51,7 +76,9 @@ exports.createOrder = createOrder = async (req, res) => {
 
             totalPrice,
 
-            deliveryAddress
+            deliveryAddress,
+
+            reference
         });
 
 
@@ -59,25 +86,29 @@ exports.createOrder = createOrder = async (req, res) => {
 
         // initialize korapay payment
           const payload = {
-            amount: menu.amount * quantity,
+            amount: totalPrice,
             customer: {
-                email: user.email,
-                name: user.firstName + " " + user.lastName
+                email,
+                name: customer.firstName + " " + customer.lastName
             },
-            redirect_url: 'http://localhost:6677/api/order',
+            redirect_url: 'http://localhost:6677/api/v1/order/verify-payment',
             currency: 'NGN',
-            reference: reference
+            reference
         };
         const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', payload, {
             headers: {
                 Authorization:  `Bearer ${process.env.KORA_API_KEY}`
             }
         });
+
+        order.checkoutUrl = data.data.checkout_url;
+        await order.save();
+
         res.status(201).json({
 
             message: 'Order created successfully',
             data: order,
-            paymentLink: payment.data.data.checkout_url
+            paymentLink: order.checkoutUrl
         });
 
     } catch (error) {
@@ -111,7 +142,7 @@ exports.verifyPayment = async (req, res, next) => {
         console.log(data);
 
         if (data.status === true && data.data.status === 'processing') {
-            order.status = 'processing'
+            order.paymentStatus = 'processing'
             await order.save();
            return res.status(200).json({
             message: 'Payment is being processed',
@@ -120,13 +151,21 @@ exports.verifyPayment = async (req, res, next) => {
         };
 
         if (data.status === true && data.data.status === 'success') {
-            order.status = 'successful'
+            order.paymentStatus = 'paid'
             await order.save();
            return res.status(200).json({
             message: 'Payment successful',
-            status: 'successful'
+            status: 'paid'
            })
         };
+
+        order.paymentStatus = 'failed'
+        await order.save();
+
+        return res.status(200).json({
+            message: 'Payment failed',
+            status: 'failed'
+        })
     } catch (error) {
         next({
                 message: error.message,

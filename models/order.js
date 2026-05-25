@@ -4,7 +4,7 @@ const orderSchema = new mongoose.Schema({
 
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Customer',
+        ref: 'customer',
         required: true
     },
 
@@ -34,9 +34,21 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
 
+    reference: {
+        type: String,
+        unique: true,
+        sparse: true,
+        trim: true
+    },
+
+    checkoutUrl: {
+        type: String,
+        trim: true
+    },
+
     paymentStatus: {
         type: String,
-        enum: ['pending', 'paid'],
+        enum: ['pending', 'processing', 'paid', 'failed'],
         default: 'pending'
     },
 
