@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { createOrder, verifyPayment } = require('../controller/order');
+const { createOrder, verifyPayment } = require('../Controller/order');
 /**
  * @swagger
  * tags:
