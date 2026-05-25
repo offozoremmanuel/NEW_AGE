@@ -2,12 +2,12 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const PORT = process.env.PORT;
-const customerRoute = require('./Routes/customer');
-const orderRouter = require('./Routes/order')
-const productRoutes= require('./Routes/product');
-const categoryRoutes = require('./Routes/category')
-const cart = require('./Routes/cart')
-const {passport} = require('./MIddleware/passport')
+const customerRoute = require('./routes/customer');
+const orderRouter = require('./routes/order')
+const productRoutes= require('./routes/product');
+const categoryRoutes = require('./routes/category')
+const cart = require('./routes/cart')
+const {passport} = require('./middleware/passport')
 const expressSession = require('express-session')
 
 
@@ -48,7 +48,7 @@ app.use((err, req, res,next) => {
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc')
-const rateLimiter = require('./MIddleware/rateLimiter')
+const rateLimiter = require('./middleware/rateLimiter')
 
 app.use('/api/v1/order', orderRouter);
 app.use( '/api/v1/customer', customerRoute);
@@ -104,7 +104,7 @@ const swaggerDefinition = {
 
 const options = {
     swaggerDefinition,
-    apis: ['./Routes/*.js']
+    apis: ['./routes/*.js']
 }
 
 const swaggerSpec = swaggerJsdoc(options);
