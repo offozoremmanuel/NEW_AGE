@@ -10,6 +10,13 @@ const {brevo} = require('../utils/brevo')
 exports.createCustomer = async (req, res) => {
     try {
         const { firstName, lastName, email, password, phoneNumber} = req.body;
+        const existingCustomer = await customerModel.findOne({email: email.toLowerCase()});
+
+if (existingCustomer) {
+    return res.status(400).json({
+        message: 'Email already exists'
+    });
+}
 
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
@@ -37,7 +44,7 @@ exports.createCustomer = async (req, res) => {
     }
 }
 exports.loginCustomer = async (req, res) => {
-    console.log("login route hit"   )
+   
     try {
         const { email, password } = req.body;
         const customer = await customerModel.findOne({ email });
@@ -52,9 +59,9 @@ exports.loginCustomer = async (req, res) => {
                 message: 'Please login with Google'
             })
         }
-        const isPasswordValid = await bcrypt.compare(password, customer.password);
+        const PasswordValid = await bcrypt.compare(password, customer.password);
 
-        if (!isPasswordValid) {
+        if (!PasswordValid) {
             return res.status(401).json({
                 message: 'Invalid password'
             })
