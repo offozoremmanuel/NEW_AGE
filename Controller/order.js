@@ -5,7 +5,7 @@ const otpGen = require('otp-generator');
 const reference = otpGen.generate(6, { digits: true, upperCaseAlphabets: false, lowerCaseAlphabets: false, specialChars: false });
 
 
-exports.createOrder = createOrder = async (req, res) => {
+exports.createOrder =  async (req, res) => {
 
     try {
 
@@ -43,7 +43,7 @@ exports.createOrder = createOrder = async (req, res) => {
             });
 
         // create order
-        exports.placeOrder = await Order.create({
+        const placeOrder = await Order.create({
 
             customerId,
 
@@ -64,7 +64,7 @@ exports.createOrder = createOrder = async (req, res) => {
                 email: user.email,
                 name: user.firstName + " " + user.lastName
             },
-            redirect_url: 'http://localhost:6677/api/order',
+            redirect_url: 'http://localhost:6677/api/v1/order',
             currency: 'NGN',
             reference: reference
         };
