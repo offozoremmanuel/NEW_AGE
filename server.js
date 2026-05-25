@@ -8,6 +8,7 @@ const axios = require('axios');
 const productRoutes= require('./Routes/product');
 const categoryRoutes = require('./Routes/category')
 const cart = require('./Routes/cart')
+const paymentRoutes = require('./Routes/payment')
 const {passport} = require('./middleware/passport')
 const expressSession = require('express-session')
 const cors = require('cors');
@@ -56,6 +57,7 @@ app.use( '/api/v1/customer', customerRoute);
 app.use('/api/v1/product', productRoutes)
 app.use('/api/v1/category', categoryRoutes)
 app.use('/api/v1/cart', cart)
+app.use('/api/v1/payment', paymentRoutes)
 
 
 
