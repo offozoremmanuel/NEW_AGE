@@ -1,15 +1,19 @@
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
+require('dotenv').config();
 
 const PORT = process.env.PORT;
 const customerRoute = require('./routes/customer');
+const orderRouter = require('./routes/order')
+const axios = require('axios');
+const productRoutes= require('./routes/product');
+const categoryRoutes = require('./Routes/category')
 const {passport} = require('./middleware/passport')
 const expressSession = require('express-session')
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
-
+app.use(cors({origin: '*'}));
 app.use(expressSession({
     secret: 'emmanuel',
     resave: true,
@@ -18,7 +22,7 @@ app.use(expressSession({
 app.use (passport.initialize())
 app.use (passport.session())
 
-app.use('/api/v1/customer', customerRoute);
+
 
 
 app.use((err, req, res,next) => {
@@ -37,18 +41,104 @@ app.use((err, req, res,next) => {
         message: 'something went wrong'
      })
 })
-app.use((req, res) => {
-    res.status(404).json({
-        message: 'Route not found'
+
+
+
+
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc')
+const rateLimiter = require('./middleware/rateLimiter')
+
+app.use('/api/v1/order', orderRouter);
+app.use( '/api/v1/customer', customerRoute);
+app.use('/api/v1/product', productRoutes)
+app.use('/api/v1/category', categoryRoutes)
+
+
+
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'New Age API Documentation',
+    version: '2.0.0',
+    description:
+      'This is a REST API application made with Express. It retrieves data from JSONPlaceholder.',
+
+    license: {
+      name: 'Official URL',
+      url: 'https://google.com',
+    },
+
+    contact: {
+      name: 'JSONPlaceholder',
+      url: 'https://jsonplaceholder.typicode.com',
+    },
+  },
+
+    servers: [
+    {
+      url: 'http://localhost:6677',
+      description: 'Development server',
+    },
+  ],
+  
+  security: [
+    {
+      bearerAuth: []
+    }
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT'
+      }
+    }
+  }
+  
+};
+
+
+const options = {
+    swaggerDefinition,
+    apis: ['./routes/*.js']
+}
+
+const swaggerSpec = swaggerJsdoc(options);
+
+app.use('/api/v1/documentation', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
+
+
+app.use((req, res, next) => {
+    next({
+                message: `route ${req.originalUrl} and ${req.method} not found`,
+                statusCode: 500
+            })
+})
+
+app.use((error, req, res, next) => {
+    res.status(error.statusCode).json({
+        message: error.message,
+        status: error.statusCode
     })
 })
 
-mongoose.connect(process.env.MONGODB_URI ).then(()=>{
-    console.log('Database connected sucessfully');
-    app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-})
-}).catch((error)=>{
-    console.log('Unable to connect:', error.message);
+
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGODB_URI)
+.then(() => {
+    console.log('Database connected successfully');
+
     
+})
+.catch((error) => {
+    console.log(error.message);
+    
+})
+    app.listen(PORT, ()=> {
+    console.log(`Server listening to Port: ${PORT}`);
 })
