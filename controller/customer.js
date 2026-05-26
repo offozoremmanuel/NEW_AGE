@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const cloudinary = require('../middleware/cloudinary')
 const jwt = require('jsonwebtoken')
 const fs = require('fs')
-const {emailTemplate,resetPasswordTemplate,resetPasswordSuccessfulTemplate} = require('../email')
+const {resetPasswordTemplate,resetPasswordSuccessfulTemplate} = require('../email')
 const {brevo} = require('../utils/brevo')
 
 

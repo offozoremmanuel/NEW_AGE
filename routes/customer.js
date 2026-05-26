@@ -8,8 +8,8 @@ const {upload} = require('../middleware/multer')
 /**
  * @swagger
  * tags:
- *   name: User
- *   description: API endpoints for user management
+ *   name: Customer
+ *   description: API endpoints for customer management
  */
 
 // Apply to all Customer routes
@@ -146,25 +146,103 @@ router.post('/',signUpValidator, createCustomer);
  *                   example: Bad request
  */
 router.post('/login', loginCustomer);
-router.put('/update-profile/:id', upload.single('profilePicture'), updateCustomerProfile)
-
- router.get('/auth/google', profile)
-//  Login with google
- /**
+// Update customer profile
+/**
  * @swagger
- * /api/v1/customer/loginsuccess:
- *   get:
+ * /api/v1/customer/update-profile/{id}:
+ *   put:
  *     tags:
  *       - Customer
- *     summary: Login with Google
- *     description: Authenticate customer using Google OAuth and return customer details with JWT token
+ *     summary: Update customer profile
+ *     description: Update a customer's profile picture, gender, and nickname
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Customer ID
+ *         example: 69f6fc59f069dce732d54a15
  *     requestBody:
- *       required: true 
+ *       required: true
  *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               profilePicture:
+ *                 type: string
+ *                 format: binary
+ *                 description: Customer profile picture
+ *               gender:
+ *                 type: string
+ *                 enum: [male, female, other]
+ *                 description: Customer gender
+ *                 example: male
+ *               nickName:
+ *                 type: string
+ *                 description: Customer nickname
+ *                 example: Johnny
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Profile updated successfully
+ *       404:
+ *         description: Customer not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Customer not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/update-profile/:id', upload.single('profilePicture'), updateCustomerProfile)
+
+// Start Google authentication
+/**
+ * @swagger
+ * /api/v1/customer/auth/google:
+ *   get:
+ *     tags:
+ *       - Customer
+ *     summary: Start Google OAuth login
+ *     description: Redirects the customer to Google for authentication
+ *     responses:
+ *       302:
+ *         description: Redirects to Google OAuth consent screen
+ */
+router.get('/auth/google', profile)
+// Google authentication callback
+/**
+ * @swagger
+ * /api/v1/customer/auth/google/callback:
+ *   get:
+ *     tags:
+ *       - Customer
+ *     summary: Google OAuth callback
+ *     description: Handles Google OAuth callback and returns customer details with JWT token
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: login successful
  *                 customer:
  *                   type: object
  *                   properties:
@@ -174,36 +252,19 @@ router.put('/update-profile/:id', upload.single('profilePicture'), updateCustome
  *                       example: 6855e0c8b7f5a2a0fbc12345
  *                     firstName:
  *                       type: string
- *                       description: Customer first name
  *                       example: John
  *                     lastName:
  *                       type: string
- *                       description: Customer last name
  *                       example: Doe
  *                     email:
  *                       type: string
- *                       description: Customer email
  *                       example: johndoe@gmail.com
  *                     phoneNumber:
  *                       type: string
- *                       description: Customer phone number
  *                       example: +2348012345678
- *                     password:
- *                       type: string
- *                       description: Customer password
- *                       example: password123
- *     responses:
- *       201:
- *         description: Customer created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
+ *                 token:
  *                   type: string
- *                   description: Confirmation message
- *                   example: Customer created successfully
+ *                   description: JWT authentication token
  *       500:
  *         description: Internal server error
  *         content:
@@ -219,21 +280,24 @@ router.get('/auth/google/callback', loginProfile, loginWithGoogle)
 // forgot password
 /**
  * @swagger
- * /api/v1/customer/forget-password:
+ * /api/v1/customer/forgot-password:
  *   post:
  *     tags:
  *       - Customer
- *     summary: Forget password (Send OTP)
- *     description: Sends a One-Time Password (OTP) to the customer's email for password reset
+ *     summary: Send password reset OTP
+ *     description: Sends a 6-digit One-Time Password (OTP) to the customer's email address. The OTP is valid for 7 minutes.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
  *             properties:
  *               email:
  *                 type: string
+ *                 format: email
  *                 description: Customer email address
  *                 example: johndoe@gmail.com
  *     responses:
@@ -248,7 +312,7 @@ router.get('/auth/google/callback', loginProfile, loginWithGoogle)
  *                   type: string
  *                   example: OTP sent successfully
  *       404:
- *         description: Invalid credentials (user not found)
+ *         description: Customer account was not found
  *         content:
  *           application/json:
  *             schema:
@@ -269,10 +333,11 @@ router.get('/auth/google/callback', loginProfile, loginWithGoogle)
  *                   example: Something went wrong
  */
 router.post('/forgot-password', forgetPassword)
-// Reset Passoerd
+
+// Reset password
 /**
  * @swagger
- * /api/v1/customer/reset-password:
+ * /api/v1/customer/request-password-reset:
  *   post:
  *     tags:
  *       - Customer
@@ -288,9 +353,11 @@ router.post('/forgot-password', forgetPassword)
  *               - email
  *               - otp
  *               - password
+ *               - confirmPassword
  *             properties:
  *               email:
  *                 type: string
+ *                 format: email
  *                 description: Customer email address
  *                 example: johndoe@gmail.com
  *               otp:
@@ -300,7 +367,11 @@ router.post('/forgot-password', forgetPassword)
  *               password:
  *                 type: string
  *                 description: New password
- *                 example: newPassword123
+ *                 example: Newpassword123
+ *               confirmPassword:
+ *                 type: string
+ *                 description: Must match the new password
+ *                 example: Newpassword123
  *     responses:
  *       200:
  *         description: Password reset successfully
