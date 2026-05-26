@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const cors =require('cors');
 const PORT = process.env.PORT || 6677;
+require('./controller/orderController')
 const customerRoute = require('./routes/customer');
 const orderRouter = require('./routes/order')
 const axios = require('axios');
