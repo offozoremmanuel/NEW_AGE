@@ -50,7 +50,7 @@ app.use((err, req, res,next) => {
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc')
-const rateLimiter = require('./middleware/rateLimiter')
+const rateLimiter = require('./Middleware/rateLimiter')
 
 app.use('/api/v1/order', orderRouter);
 app.use( '/api/v1/customer', customerRoute);
