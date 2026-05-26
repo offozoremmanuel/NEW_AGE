@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const {upload} = require('../middleware/multer')
+const upload = require('../middleware/multer')
 
 const { createProduct, getAllProducts, getOneProduct, updateProduct, deleteProduct } = require('../Controller/product')
 // Tags
@@ -105,7 +105,7 @@ const { createProduct, getAllProducts, getOneProduct, updateProduct, deleteProdu
  *                   type: string
  *                   example: Something went wrong
  */
-router.post('/register', upload.fields([{ name: 'image', maxCount: 3 }]), createProduct);
+router.post('/register', upload.fields([{ name: 'images', maxCount: 3 }]), createProduct);
 // getAllProducts
 /**
  * @swagger
@@ -341,7 +341,7 @@ router.get('/get-one-product/:id', getOneProduct)
  *                   type: string
  *                   example: Something went wrong
  */
-router.put('/update-product/:id', upload.fields([{ name: 'image', maxCount: 3 }]), updateProduct)
+router.put('/update-product/:id', upload.fields([{ name: 'images', maxCount: 3 }]), updateProduct)
 // deleteProduct
 /**
  * @swagger

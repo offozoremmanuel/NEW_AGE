@@ -194,11 +194,10 @@ exports.resetPassword = async (req, res) => {
 }
  
 exports.updateCustomerProfile = async (req, res) =>{
-    let filePath;
     try {
         const {gender,nickName} = req.body;
         const {id} = req.params
-
+        let filePath;
         const customer = await customerModel.findById(id)
         if (!customer){
             return res.status(404).json({

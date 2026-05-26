@@ -207,7 +207,7 @@ router.post('/login', loginCustomer);
  *       500:
  *         description: Server error
  */
-router.put('/update-profile/:id', upload.array('images', 3), updateCustomerProfile)
+router.put('/update-profile/:id',upload.single('profilePicture'), updateCustomerProfile)
 
 // Start Google authentication
 /**
