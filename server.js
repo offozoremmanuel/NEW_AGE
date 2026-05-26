@@ -2,9 +2,8 @@ const express = require('express');
 require('dotenv').config();
 const cors =require('cors');
 const PORT = process.env.PORT || 6677;
-require('./controller/orderController')
 const customerRoute = require('./routes/customer');
-// const orderRouter = require('./routes/order')
+const orderRouter = require('./routes/order')
 const axios = require('axios');
 const productRoutes= require('./routes/product');
 const categoryRoutes = require('./routes/category')
@@ -53,7 +52,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc')
 const rateLimiter = require('./middleware/rateLimiter')
 
-// app.use('/api/v1/order', orderRouter);
+app.use('/api/v1/order', orderRouter);
 app.use( '/api/v1/customer', customerRoute);
 app.use('/api/v1/product', productRoutes)
 app.use('/api/v1/category', categoryRoutes)
