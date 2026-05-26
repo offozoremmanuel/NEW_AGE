@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const {upload} = require('../middleware/multer')
 
-const { createProduct, getAllProducts, getOneProduct, updateProduct, deleteProduct } = require('../controller/product')
+const { createProduct, getAllProducts, getOneProduct, updateProduct, deleteProduct } = require('../Controller/product')
 // Tags
 /**
  * @swagger
