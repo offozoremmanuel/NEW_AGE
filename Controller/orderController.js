@@ -119,7 +119,7 @@ exports.createOrder = async (req, res) => {
     }
 };
 
-const verifyPayment = async (req, res, next) => {
+exports.verifyPayment = async (req, res, next) => {
     try {
         const { reference } = req.query;
         const order = await Order.findOne({
@@ -173,5 +173,7 @@ const verifyPayment = async (req, res, next) => {
             })
     }
 }
+
+ 
 
 
