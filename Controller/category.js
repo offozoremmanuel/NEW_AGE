@@ -1,11 +1,8 @@
 const Category = require('../models/category');
 const fs = require('fs')
 exports.createCategory = async (req, res) => {
-
     try {
-
         const { categoryName } = req.body;
-
         const existingCategory =
             await Category.findOne({
                 categoryName
