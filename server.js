@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const PORT = process.env.PORT || 6677;
+const passport =require('passport')
 const customerRoute = require('./routes/customer');
 const orderRouter = require('./routes/order')
 const axios = require('axios');
@@ -10,7 +11,7 @@ const categoryRoutes = require('./routes/category')
 const cart = require('./routes/cart')
 const paymentRoutes = require('./routes/payment')
 const deliveryRoutes = require('./routes/delivery')
-const {passport} = require('./middleware/passport')
+require('./middleware/passport')
 const expressSession = require('express-session')
 
 
