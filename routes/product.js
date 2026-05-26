@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const {upload} = require('../middleware/multer')
+const upload = require('../middleware/multer')
 
 const { createProduct, getAllProducts, getOneProduct, updateProduct, deleteProduct } = require('../Controller/product')
 // Tags
