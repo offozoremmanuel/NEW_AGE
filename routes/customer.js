@@ -276,9 +276,9 @@ router.get('/collect', passport.authenticate('google', {scope: ['profile', 'emai
  *                   type: string
  *                   example: something went wrong
  */
-router.get('/googleLogin', passport.authenticate('google', {
-    successRedirect: '/api/user/loginsuccess', 
-    failureRedirect: '/api/user/loginfailed'
+router.get('/auth/google/callback', passport.authenticate('google', {
+    successRedirect: '/api/v1/customer/loginsuccess', 
+    failureRedirect: '/api/v1/customer/loginfailed'
 }))
 
     router.get('/loginsuccess', (req, res) => {
