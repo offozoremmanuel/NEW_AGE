@@ -1,24 +1,35 @@
-const multer = require('multer')
-const path = require('path')
+const multer = require('multer');
 
-exports.upload = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb)=>{
-            cb(null, './uploads')
-        },
-        filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-            cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname))
-        }
-    }),
-    limits: {
-        fileSize: 1024 * 1024 
+const storage = multer.diskStorage({
+    destination: (req, file, cb)=>{
+        cb(null, './uploads')
     },
-    fileFilter: (req, file, cb)=>{
-        if (!file.mimetype.startsWith('image/')){
-            cb(new Error('Only image files are allowed'))
-        }else {
-            cb(null, true)
-        }
+    filename: (req, file, cb) => {
+        const ext = file.mimetype.split('/')[1]
+        const fileName = `IMG-${Date.now()}_${Math.floor(Math.random() * 1E10)}.${ext}`
+        cb(null, fileName)
     }
+});
+
+const fileFilter = (req, file, cb)=> {
+    console.log('File: ',file);
+    console.log('File Mimetype: ', file.mimetype);
+    
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true)
+    } else{
+        cb(new Error('Invalid image format, only images allowed'))
+    }
+}
+
+const limits = {
+    fileSize: 1024 * 1024 * 5
+}
+
+const upload =multer({
+    storage,
+    fileFilter,
+    limits
 })
+
+module.exports = upload;

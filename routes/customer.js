@@ -2,7 +2,7 @@ const router = require('express').Router();
 const {createCustomer, loginCustomer, loginWithGoogle, resetPassword, forgetPassword, updateCustomerProfile} = require('../Controller/customer');
 const { resetPasswordValidator, signUpValidator }= require('../middleware/validator')
 const {loginProfile, profile}=require('../middleware/passport')
-const {upload} = require('../middleware/multer')
+const upload = require('../middleware/multer')
 
 // tags
 /**
@@ -207,7 +207,7 @@ router.post('/login', loginCustomer);
  *       500:
  *         description: Server error
  */
-router.put('/update-profile/:id', upload.single('profilePicture'), updateCustomerProfile)
+router.put('/update-profile/:id', upload.array('images', 3), updateCustomerProfile)
 
 // Start Google authentication
 /**
