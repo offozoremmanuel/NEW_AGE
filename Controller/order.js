@@ -1,5 +1,5 @@
-const Order = require('../models/order');
-const Product = require('../models/product');
+const orderModel = require('../models/order');
+const productModel = require('../models/product');
 const axios = require('axios');
 const otpGen = require('otp-generator');
 
@@ -27,7 +27,8 @@ exports.createOrder = async (req, res) => {
         // LOOP THROUGH PRODUCTS
         for (const item of products) {
 
-            const product = await Product.findById(item.productId);
+            const product = await productModel
+            .findById(item.productId);
 
             if (!product) {
                 return res.status(404).json({
@@ -45,7 +46,7 @@ exports.createOrder = async (req, res) => {
         }
 
         // CREATE ORDER
-        const placeOrder = await Order.create({
+        const placeOrder = await orderModel.create({
             customerId,
             email,
             products: orderedProducts,
@@ -94,7 +95,7 @@ exports.verifyPayment = async (req, res, next) => {
 
         const { reference } = req.query;
 
-        const order = await Order.findOne({
+        const order = await orderModel.findOne({
             reference
         });
 
