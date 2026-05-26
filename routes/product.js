@@ -13,7 +13,7 @@ const { createProduct, getAllProducts, getOneProduct, updateProduct, deleteProdu
 // create product
 /**
  * @swagger
- * /api/v1/product/create-product:
+ * /api/v1/product/register:
  *   post:
  *     tags:
  *       - Product

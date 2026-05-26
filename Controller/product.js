@@ -26,7 +26,7 @@ exports.createProduct = async (req, res) => {
             fs.unlinkSync(path)
         }
          const category =
-            await Category.findById(
+            await categoryModel.findById(
                 productCategory
             );
         if (!category) {
