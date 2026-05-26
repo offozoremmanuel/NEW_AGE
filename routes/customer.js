@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {createCustomer, loginCustomer, loginWithGoogle, resetPassword, forgetPassword, updateCustomerProfile} = require('../Controller/customer');
+const {createCustomer, loginCustomer, loginWithGoogle, resetPassword, forgetPassword, updateCustomerProfile} = require('../controller/customer');
 const { resetPasswordValidator, signUpValidator }= require('../middleware/validator')
 const {loginProfile, profile}=require('../middleware/passport')
 const {upload} = require('../middleware/multer')
