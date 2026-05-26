@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const passport = require('passport')
 const {createCustomer, loginCustomer, loginWithGoogle, resetPassword, forgetPassword, updateCustomerProfile} = require('../Controller/customer');
 const { resetPasswordValidator, signUpValidator }= require('../middleware/validator')
 const {loginProfile, profile}=require('../middleware/passport')
@@ -212,7 +213,7 @@ router.put('/update-profile/:id',upload.single('profilePicture'), updateCustomer
 // Start Google authentication
 /**
  * @swagger
- * /api/v1/customer/auth/google:
+ * /api/v1/customer/collect:
  *   get:
  *     tags:
  *       - Customer
@@ -222,11 +223,11 @@ router.put('/update-profile/:id',upload.single('profilePicture'), updateCustomer
  *       302:
  *         description: Redirects to Google OAuth consent screen
  */
-router.get('/auth/google', profile)
+router.get('/collect', passport.authenticate('google', {scope: ['profile', 'email']}))
 // Google authentication callback
 /**
  * @swagger
- * /api/v1/customer/auth/google/callback:
+ * /api/v1/customer/googleLogin:
  *   get:
  *     tags:
  *       - Customer
@@ -276,7 +277,19 @@ router.get('/auth/google', profile)
  *                   type: string
  *                   example: something went wrong
  */
-router.get('/auth/google/callback', loginProfile, loginWithGoogle)
+router.get('/googleLogin', passport.authenticate('google', {
+    successRedirect: '/api/user/loginsuccess', 
+    failureRedirect: '/api/user/loginfailed'
+}))
+
+    router.get('/loginsuccess', (req, res) => {
+        res.json({message: 'Login successful', 
+            data: req.user})
+    })
+
+router.get('/loginfailed', (req, res) => {
+        res.json({message: 'Login failed'})
+    })
 // forgot password
 /**
  * @swagger
