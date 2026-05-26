@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { initializePayment, verifyPayment } = require('../controller/payment');
+const { initializePayment, verifyPayment } = require('../Controller/payment');
 
 /**
  * @swagger
