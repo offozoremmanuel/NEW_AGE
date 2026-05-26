@@ -2,7 +2,6 @@ const router = require('express').Router();
 const passport = require('passport')
 const {createCustomer, loginCustomer, loginWithGoogle, resetPassword, forgetPassword, updateCustomerProfile} = require('../Controller/customer');
 const { resetPasswordValidator, signUpValidator }= require('../middleware/validator')
-const {loginProfile, profile}=require('../middleware/passport')
 const upload = require('../middleware/multer')
 
 // tags
