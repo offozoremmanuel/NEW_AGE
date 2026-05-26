@@ -4,7 +4,7 @@ const path = require('path')
 exports.upload = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb)=>{
-            cb(null, './assets')
+            cb(null, './uploads')
         },
         filename: function (req, file, cb) {
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
