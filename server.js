@@ -82,7 +82,7 @@ const swaggerDefinition = {
 
     servers: [
     {
-      url: 'https://new-age-3mtc.onrender.com',
+      url: 'https://new-age-59we.onrender.com',
       description: 'Development server',
     },
   ],
@@ -136,13 +136,14 @@ const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
     console.log('Database connected successfully');
-
+    
+  app.listen(PORT, ()=> {
+    console.log(`Server listening to Port: ${PORT}`);
+})
     
 })
 .catch((error) => {
     console.log(error.message);
     
 })
-    app.listen(PORT, ()=> {
-    console.log(`Server listening to Port: ${PORT}`);
-})
+    
