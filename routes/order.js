@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const path = require('path');
-const controller = require('../controller/order')
+const { createOrder, verifyPayment } = require('../controller/order');
 
 
 /**
@@ -106,7 +106,7 @@ const controller = require('../controller/order')
  *                   type: string
  *                   example: Something went wrong
  */
-router.post('/create-order', controller.createOrder);
+router.post('/create-order', createOrder);
 // Verify Payments
 /**
  * @swagger
@@ -161,6 +161,6 @@ router.post('/create-order', controller.createOrder);
  *                   type: string
  *                   example: Something went wrong
  */
-router.get('/verify-payment', controller.verifyPayment);
+router.get('/verify-payment', verifyPayment);
 
 module.exports = router;

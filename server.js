@@ -1,12 +1,14 @@
 const express = require('express');
 require('dotenv').config();
-const cors = require('cors');
-const PORT = process.env.PORT;
+const cors =require('cors');
+const PORT = process.env.PORT || 6677;
 const customerRoute = require('./routes/customer');
 const orderRouter = require('./routes/order')
+const axios = require('axios');
 const productRoutes= require('./routes/product');
 const categoryRoutes = require('./routes/category')
 const cart = require('./routes/cart')
+const paymentRoutes = require('./routes/payment')
 const {passport} = require('./middleware/passport')
 const expressSession = require('express-session')
 
@@ -55,6 +57,7 @@ app.use( '/api/v1/customer', customerRoute);
 app.use('/api/v1/product', productRoutes)
 app.use('/api/v1/category', categoryRoutes)
 app.use('/api/v1/cart', cart)
+app.use('/api/v1/payment', paymentRoutes)
 
 
 
@@ -121,9 +124,9 @@ app.use((req, res, next) => {
 })
 
 app.use((error, req, res, next) => {
-    res.status(error.statusCode).json({
+    res.status(error.statusCode || 500).json({
         message: error.message,
-        status: error.statusCode
+        status: error.statusCode || 500
     })
 })
 
