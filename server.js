@@ -8,7 +8,7 @@ const axios = require('axios');
 const productRoutes= require('./routes/product');
 const categoryRoutes = require('./routes/category')
 const cart = require('./routes/cart')
-const paymentRoutes = require('./routes/payment')
+const paymentRoutes = require('./Routes/payment')
 const {passport} = require('./middleware/passport')
 const expressSession = require('express-session')
 
