@@ -10,7 +10,7 @@ const reference = otpGen.generate(6, {
     specialChars: false
 });
 
-exports.createOrder = async (req, res) => {
+const createOrder = async (req, res) => {
     try {
 
         const {
@@ -90,7 +90,7 @@ exports.createOrder = async (req, res) => {
     }
 };
 
-exports.verifyPayment = async (req, res, next) => {
+const verifyPayment = async (req, res, next) => {
     try {
 
         const { reference } = req.query;
@@ -140,9 +140,9 @@ exports.verifyPayment = async (req, res, next) => {
 
     } catch (error) {
 
-        next({
-            message: error.message,
-            statusCode: 500
-        });
+       return res.status(500).json({
+        error: error.message
+       })
     }
 };
+module.exports = {createOrder, verifyPayment}
