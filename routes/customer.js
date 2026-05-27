@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const {createCustomer, loginCustomer, loginWithGoogle, resetPassword, forgetPassword, updateCustomerProfile} = require('../controller/customer');
-const { resetPasswordValidator, signUpValidator }= require('../middleware/validator')
+const { forgotPasswordValidator, loginValidator, resetPasswordValidator, signUpValidator }= require('../middleware/validator')
 const {loginProfile, profile}=require('../middleware/passport')
 const {upload} = require('../middleware/multer')
 
@@ -17,33 +17,34 @@ const {upload} = require('../middleware/multer')
  * @swagger
  * components:
  *   schemas:
- *     User:
+ *     Customer:
  *       type: object
  *       properties:
  *         id:
  *           type: string
- *           description: The User ID
+ *           description: The Customer ID
  *           example: 69f6fc59f069dce732d54a15
- *         name:
+ *         firstName:
  *           type: string
- *           description: The User's First Name
- *           example: John
+ *           description: The Customer's First Name
+ *           example: Emmanuel
+ *         lastName:
+ *           type: string
+ *           description: The Customer's Last Name
+ *           example: Ofozore
  *         email:
  *           type: string
- *           description: The User's Email
- *           example: example@example.com
+ *           format: email
+ *           description: The Customer's Email
+ *           example: emmanuel@example.com
  *         phoneNumber:
  *           type: string
- *           description: The User's Phone Number
- *           example: +2348012345678
+ *           description: The Customer's Phone Number. Must be exactly 11 digits.
+ *           example: "08012345678"
  *         password:
  *           type: string
- *           description: The User's Password
- *           example: password123
- *         confirmPassword:
- *           type: string
- *           description: The User's Confirm Password
- *           example: password123
+ *           description: Must be at least 8 characters and include uppercase and lowercase letters.
+ *           example: Password123
  *              
  */
 
@@ -55,34 +56,42 @@ const {upload} = require('../middleware/multer')
  *     tags:
  *       - Customer
  *     summary: Customer registration
- *     description: Register a new customer with name, email, phone number, password, and confirm password
+ *     description: Register a new customer. Phone number must be exactly 11 digits. Password must be at least 8 characters and include uppercase and lowercase letters.
+ *     security: []
  *     requestBody:
  *       required: true 
  *       content:
  *         application/json:
  *           schema: 
  *             type: object
+ *             required:
+ *               - firstName
+ *               - lastName
+ *               - email
+ *               - phoneNumber
+ *               - password
  *             properties:
  *               firstName:
  *                 type: string  
  *                 description: The Customer's First Name
- *                 example: John
+ *                 example: Emmanuel
  *               lastName:
  *                 type: string
  *                 description: The Customer's Last Name
- *                 example: Doe
+ *                 example: Ofozore
  *               email:
  *                 type: string
+ *                 format: email
  *                 description: The Customer's Email
- *                 example: example@example.com
+ *                 example: emmanuel@example.com
  *               phoneNumber:
  *                 type: string
- *                 description: The Customer's Phone Number
- *                 example: +2348012345678
+ *                 description: Must contain only digits and must be exactly 11 digits
+ *                 example: "08012345678"
  *               password:
  *                 type: string
- *                 description: The Customer's Password
- *                 example: password123
+ *                 description: Must be at least 8 characters and include uppercase and lowercase letters
+ *                 example: Password123
  *     responses:
  *       201:
  *         description: Customer created successfully
@@ -95,6 +104,16 @@ const {upload} = require('../middleware/multer')
  *                   type: string
  *                   description: Confirmation message
  *                   example: Customer created successfully
+ *       400:
+ *         description: Validation error or duplicate email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Phone Number must only contain digits and be 11 digits
  */
 router.post('/',signUpValidator, createCustomer);
 // Log in a customer
@@ -106,21 +125,26 @@ router.post('/',signUpValidator, createCustomer);
  *       - Customer
  *     summary: Customer login
  *     description: Login a customer with email and password
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
  *               email:
  *                 type: string
+ *                 format: email
  *                 description: The Customer's Email
- *                 example: example@example.com
+ *                 example: emmanuel@example.com
  *               password:
  *                 type: string
  *                 description: The Customer's Password
- *                 example: password123
+ *                 example: Password123
  *     responses:
  *       200:
  *         description: Login successful
@@ -133,6 +157,10 @@ router.post('/',signUpValidator, createCustomer);
  *                   type: string
  *                   description: Confirmation message
  *                   example: Login successful
+ *                 token:
+ *                   type: string
+ *                   description: JWT token returned after login
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example.signature
  *       400:
  *         description: Bad request
  *         content:
@@ -143,9 +171,9 @@ router.post('/',signUpValidator, createCustomer);
  *                 message:
  *                   type: string
  *                   description: Error message
- *                   example: Bad request
+ *                   example: email must be a valid email
  */
-router.post('/login', loginCustomer);
+router.post('/login', loginValidator, loginCustomer);
 // Update customer profile
 /**
  * @swagger
@@ -155,6 +183,7 @@ router.post('/login', loginCustomer);
  *       - Customer
  *     summary: Update customer profile
  *     description: Update a customer's profile picture, gender, and nickname
+ *     security: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -218,6 +247,7 @@ router.put('/update-profile/:id', upload.single('profilePicture'), updateCustome
  *       - Customer
  *     summary: Start Google OAuth login
  *     description: Redirects the customer to Google for authentication
+ *     security: []
  *     responses:
  *       302:
  *         description: Redirects to Google OAuth consent screen
@@ -232,6 +262,7 @@ router.get('/auth/google', profile)
  *       - Customer
  *     summary: Google OAuth callback
  *     description: Handles Google OAuth callback and returns customer details with JWT token
+ *     security: []
  *     responses:
  *       200:
  *         description: Login successful
@@ -286,6 +317,7 @@ router.get('/auth/google/callback', loginProfile, loginWithGoogle)
  *       - Customer
  *     summary: Send password reset OTP
  *     description: Sends a 6-digit One-Time Password (OTP) to the customer's email address. The OTP is valid for 7 minutes.
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -321,6 +353,16 @@ router.get('/auth/google/callback', loginProfile, loginWithGoogle)
  *                 message:
  *                   type: string
  *                   example: invalid credentials
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: email must be a valid email
  *       500:
  *         description: Server error
  *         content:
@@ -332,7 +374,7 @@ router.get('/auth/google/callback', loginProfile, loginWithGoogle)
  *                   type: string
  *                   example: Something went wrong
  */
-router.post('/forgot-password', forgetPassword)
+router.post('/forgot-password', forgotPasswordValidator, forgetPassword)
 
 // Reset password
 /**
@@ -343,6 +385,7 @@ router.post('/forgot-password', forgetPassword)
  *       - Customer
  *     summary: Reset password using OTP
  *     description: Resets a customer's password after verifying OTP sent to their email
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -366,12 +409,12 @@ router.post('/forgot-password', forgetPassword)
  *                 example: "123456"
  *               password:
  *                 type: string
- *                 description: New password
- *                 example: Newpassword123
+ *                 description: Must be at least 8 characters and include uppercase and lowercase letters
+ *                 example: Password123
  *               confirmPassword:
  *                 type: string
  *                 description: Must match the new password
- *                 example: Newpassword123
+ *                 example: Password123
  *     responses:
  *       200:
  *         description: Password reset successfully
@@ -383,6 +426,16 @@ router.post('/forgot-password', forgetPassword)
  *                 message:
  *                   type: string
  *                   example: Password reset successfully
+ *       400:
+ *         description: Validation error or invalid OTP
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: OTP must only contain digits and be 6 digits
  */
 router.post('/request-password-reset',resetPasswordValidator,resetPassword)
 

@@ -35,6 +35,49 @@ exports.signUpValidator = (req,res, next) =>{
     }
     next()
 }
+
+exports.loginValidator = (req, res, next) => {
+    const schema = joi.object({
+        email: joi.string().email().required().messages({
+            'any.required': "email is required",
+            'string.empty': "email cannot be empty",
+            'string.email': "email must be a valid email"
+        }),
+        password: joi.string().required().messages({
+            'any.required': "password is required",
+            'string.empty': "password cannot be empty"
+        })
+    })
+
+    const {error} = schema.validate(req.body);
+
+    if (error){
+        return res.status(400).json({
+            message: error.details[0].message
+        })
+    }
+    next()
+}
+
+exports.forgotPasswordValidator = (req, res, next) => {
+    const schema = joi.object({
+        email: joi.string().email().required().messages({
+            'any.required': "email is required",
+            'string.empty': "email cannot be empty",
+            'string.email': "email must be a valid email"
+        })
+    })
+
+    const {error} = schema.validate(req.body);
+
+    if (error){
+        return res.status(400).json({
+            message: error.details[0].message
+        })
+    }
+    next()
+}
+
 exports.resetPasswordValidator = (req,res, next) =>{
     const schema = joi.object({
         email: joi.string().email().required().messages({
