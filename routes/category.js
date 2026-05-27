@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { upload } = require('../middleware/multer');
 
 const { createCategory, getAllCategories, getOneCategory, updateCategory, deleteCategory} = require('../Controller/category');
 /**
@@ -29,8 +30,9 @@ const { createCategory, getAllCategories, getOneCategory, updateCategory, delete
  *             properties:
  *               categoryName:
  *                 type: string
+ *                 enum: [audio, chargers, smartwatch, powerbank, cables, jumpstarters]
  *                 description: Category name
- *                 example: Electronics
+ *                 example: audio
  *               categoryImage:
  *                 type: string
  *                 format: binary
@@ -51,7 +53,7 @@ const { createCategory, getAllCategories, getOneCategory, updateCategory, delete
  *       400:
  *         description: Category already exists
  */
-router.post('/create-category', createCategory );
+router.post('/create-category', upload.single('categoryImage'), createCategory );
 // get all categories
 /**
  * @swagger
@@ -142,7 +144,8 @@ router.get('/one-category/:id',getOneCategory);
  *             properties:
  *               categoryName:
  *                 type: string
- *                 example: Phones
+ *                 enum: [audio, chargers, smartwatch, powerbank, cables, jumpstarters]
+ *                 example: chargers
  *               categoryImage:
  *                 type: string
  *                 format: binary
@@ -152,7 +155,7 @@ router.get('/one-category/:id',getOneCategory);
  *       404:
  *         description: Category not found
  */
-router.put('/update-category/:id', updateCategory);
+router.put('/update-category/:id', upload.single('categoryImage'), updateCategory);
 // Delete category
 /**
  * @swagger

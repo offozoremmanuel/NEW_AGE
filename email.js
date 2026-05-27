@@ -60,7 +60,7 @@ exports.resetPasswordTemplate = (data)=> {
                         <!-- Brand Header -->
                         <tr>
                             <td align="center" style="padding: 30px 20px; background-color: #ffffff; border-bottom: 1px solid #eeeeee;">
-                                <h1 style="margin: 0; color: #00d2ff; font-size: 24px; font-weight: 800; letter-spacing: 1px;">NEW AGE PLC</h1>
+                                <h1 style="margin: 0; color: #ec650bf8; font-size: 24px; font-weight: 800; letter-spacing: 1px;">NEW AGE PLC</h1>
                             </td>
                         </tr>
 
@@ -73,7 +73,7 @@ exports.resetPasswordTemplate = (data)=> {
                                 </p>
                                 
                                 <!-- OTP Box -->
-                                <div style="background-color: #f8fafc; border: 2px dashed #00d2ff; border-radius: 12px; padding: 25px; margin: 20px 0;">
+                                <div style="background-color: #f8fafc; border: 2px dashed #ec650bf8; border-radius: 12px; padding: 25px; margin: 20px 0;">
                                     <span class="otp-code" style="font-family: 'Courier New', Courier, monospace; font-size: 38px; font-weight: bold; letter-spacing: 10px; color: #1a1a1a; display: block;">
                                         ${data.otp}
                                     </span>
@@ -91,8 +91,8 @@ exports.resetPasswordTemplate = (data)=> {
                             <td align="center" style="padding: 25px; background-color: #fafafa; font-size: 12px; color: #aaaaaa;">
                                 <p style="margin: 0;">&copy; 2026 NEW AGE PLC. All rights reserved.</p>
                                 <p style="margin: 8px 0 0;">
-                                    <a href="#" style="color: #00d2ff; text-decoration: none;">Help Center</a> • 
-                                    <a href="#" style="color: #00d2ff; text-decoration: none;">Security Tips</a>
+                                    <a href="#" style="color: #ec650bf8; text-decoration: none;">Help Center</a> • 
+                                    <a href="#" style="color: #ec650bf8; text-decoration: none;">Security Tips</a>
                                 </p>
                             </td>
                         </tr>
@@ -133,7 +133,7 @@ exports.resetPasswordSuccessfulTemplate = (data)=> {
                         <!-- Header -->
                         <tr>
                             <td align="center" style="padding: 30px 20px; background-color: #ffffff; border-bottom: 1px solid #eeeeee;">
-                                <h1 style="margin: 0; color: #00d2ff; font-size: 24px; font-weight: 800; letter-spacing: 1px;">NEW AGE PLC</h1>
+                                <h1 style="margin: 0; color: #ec650bf8; font-size: 24px; font-weight: 800; letter-spacing: 1px;">NEW AGE PLC</h1>
                             </td>
                         </tr>
 
@@ -141,7 +141,7 @@ exports.resetPasswordSuccessfulTemplate = (data)=> {
                         <tr>
                             <td class="content" style="padding: 40px; text-align: center; color: #333333;">
                                 <!-- Success Icon (Simple Circle Check) -->
-                                <div style="margin-bottom: 20px; font-size: 50px; color: #10b981;">✓</div>
+                                <div style="margin-bottom: 20px; font-size: 50px; color: #ec650bf8;">✓</div>
                                 
                                 <h2 style="margin: 0 0 15px; font-size: 22px; font-weight: 700; color: #1a1a1a;">Password Reset Successful</h2>
                                 <p style="font-size: 16px; line-height: 1.5; margin: 0 0 30px; color: #666666;">
@@ -149,7 +149,7 @@ exports.resetPasswordSuccessfulTemplate = (data)=> {
                                 </p>
                                 
                                 <!-- CTA Button -->
-                                <a href="https://newageplc.com" class="cta-button" style="display: inline-block; background-color: #00d2ff; color: #ffffff; padding: 16px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                                <a href="https://newageplc.com" class="cta-button" style="display: inline-block; background-color: #ec650bf8; color: #ffffff; padding: 16px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
                                     Log In to NEW AGE PLC
                                 </a>
 
@@ -165,8 +165,8 @@ exports.resetPasswordSuccessfulTemplate = (data)=> {
                             <td align="center" style="padding: 25px; background-color: #fafafa; font-size: 12px; color: #aaaaaa;">
                                 <p style="margin: 0;">&copy; 2026 NEW AGE PLC. All rights reserved.</p>
                                 <p style="margin: 8px 0 0;">
-                                    <a href="#" style="color: #00d2ff; text-decoration: none;">Security Settings</a> • 
-                                    <a href="#" style="color: #00d2ff; text-decoration: none;">Contact Support</a>
+                                    <a href="#" style="color: #ec650bf8; text-decoration: none;">Security Settings</a> • 
+                                    <a href="#" style="color: #ec650bf8; text-decoration: none;">Contact Support</a>
                                 </p>
                             </td>
                         </tr>

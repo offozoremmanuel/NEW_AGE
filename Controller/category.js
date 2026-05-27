@@ -2,7 +2,9 @@ const Category = require('../models/category');
 const fs = require('fs')
 exports.createCategory = async (req, res) => {
     try {
-        const { categoryName } = req.body;
+
+        const categoryName = req.body.categoryName?.toLowerCase();
+
         const existingCategory =
             await Category.findOne({
                 categoryName
@@ -91,9 +93,12 @@ exports.updateCategory = async (req, res) => {
             await Category.findByIdAndUpdate( id,{
 
                     categoryName:
-                    req.body.categoryName,
+                    req.body.categoryName?.toLowerCase(),
 
-                    categoryImage: req.file ? req.file.path :undefined }, { new: true });
+                    categoryImage: req.file ? req.file.path :undefined }, {
+                        new: true,
+                        runValidators: true
+                    });
         if (!updatedCategory) {
             return res.status(404).json({
                 message:

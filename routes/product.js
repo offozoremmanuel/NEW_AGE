@@ -1,4 +1,14 @@
 const router = require('express').Router();
+const { upload } = require('../middleware/multer');
+const {
+    createProduct,
+    createProductByCategory,
+    getAllProducts,
+    getProductsByCategory,
+    getOneProduct,
+    updateProduct,
+    deleteProduct
+} = require('../controller/product');
 
 const upload = require('../middleware/multer')
 
@@ -114,10 +124,26 @@ router.post('/register', upload.fields([{ name: 'images', maxCount: 3 }]), creat
  *     tags:
  *       - Product
  *     summary: Get all products
- *     description: Retrieves all products from the database
+ *     description: Retrieves all products. You can filter products by category or featured status.
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [audio, chargers, smartwatch, powerbank, cables, jumpstarters]
+ *         description: Product category to filter by
+ *         example: audio
+ *       - in: query
+ *         name: featured
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *         description: Filter featured products
+ *         example: true
  *     responses:
  *       200:
- *         description: List of all products
+ *         description: Products fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -136,24 +162,63 @@ router.post('/register', upload.fields([{ name: 'images', maxCount: 3 }]), creat
  *                         example: 6855ab23c8d9f12345678901
  *                       productName:
  *                         type: string
- *                         example: iPhone 15 Pro Max
+ *                         example: Oraimo Watch Pro
  *                       productPrice:
  *                         type: number
- *                         example: 1500000
+ *                         example: 45000
+ *                       discountPrice:
+ *                         type: number
+ *                         example: 38000
  *                       productDescription:
  *                         type: string
- *                         example: Latest Apple smartphone with advanced features
+ *                         example: Smartwatch with health tracking and long battery life
  *                       productCategory:
  *                         type: string
- *                         example: Electronics
+ *                         enum: [audio, chargers, smartwatch, powerbank, cables, jumpstarters]
+ *                         example: smartwatch
+ *                       productBrand:
+ *                         type: string
+ *                         example: Oraimo
  *                       productQuantity:
  *                         type: number
- *                         example: 10
+ *                         example: 20
  *                       productImage:
- *                         type: string
- *                         example: uploads/iphone.jpg
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                         example:
+ *                           - https://res.cloudinary.com/demo/image/upload/watch.jpg
+ *                       productRating:
+ *                         type: number
+ *                         example: 4.5
+ *                       isFeatured:
+ *                         type: boolean
+ *                         example: true
  *       500:
- *         description: Internal server error
+ *         description: Server error
+ */
+router.get('/get-all-products', getAllProducts);
+
+/**
+ * @swagger
+ * /api/v1/product/category/{category}:
+ *   get:
+ *     tags:
+ *       - Product
+ *     summary: Get products by category
+ *     description: Retrieves products that belong to one category.
+ *     parameters:
+ *       - in: path
+ *         name: category
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [audio, chargers, smartwatch, powerbank, cables, jumpstarters]
+ *         description: Product category
+ *         example: chargers
+ *     responses:
+ *       200:
+ *         description: Category products fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -161,10 +226,18 @@ router.post('/register', upload.fields([{ name: 'images', maxCount: 3 }]), creat
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Something went wrong
+ *                   example: chargers products
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       400:
+ *         description: Invalid product category
+ *       500:
+ *         description: Server error
  */
-router.get('/get-all-products', getAllProducts)
-// getOneProduct
+router.get('/category/:category', getProductsByCategory);
+
 /**
  * @swagger
  * /api/v1/product/get-one-product/{id}:
@@ -172,18 +245,18 @@ router.get('/get-all-products', getAllProducts)
  *     tags:
  *       - Product
  *     summary: Get one product
- *     description: Retrieves a single product using its ID
+ *     description: Retrieves one product by ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Product ID
  *         schema:
  *           type: string
- *           example: 6855ab23c8d9f12345678901
+ *         description: Product ID
+ *         example: 6855ab23c8d9f12345678901
  *     responses:
  *       200:
- *         description: Product found successfully
+ *         description: Product fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -200,199 +273,45 @@ router.get('/get-all-products', getAllProducts)
  *                       example: 6855ab23c8d9f12345678901
  *                     productName:
  *                       type: string
- *                       example: iPhone 15 Pro Max
+ *                       example: Oraimo FreePods
  *                     productPrice:
  *                       type: number
- *                       example: 1500000
+ *                       example: 25000
+ *                     discountPrice:
+ *                       type: number
+ *                       example: 21000
  *                     productDescription:
  *                       type: string
- *                       example: Latest Apple smartphone with advanced features
+ *                       example: Wireless earbuds with clear audio
  *                     productCategory:
  *                       type: string
- *                       example: Electronics
+ *                       example: audio
+ *                     productBrand:
+ *                       type: string
+ *                       example: Oraimo
  *                     productQuantity:
  *                       type: number
- *                       example: 10
+ *                       example: 30
  *                     productImage:
- *                       type: string
- *                       example: uploads/iphone.jpg
- *       404:
- *         description: Product not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Product not found
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Something went wrong
- */
-router.get('/get-one-product/:id', getOneProduct)
-// updateProduct
-/**
- * @swagger
- * /api/v1/product/update-product/{id}:
- *   put:
- *     tags:
- *       - Product
- *     summary: Update a product
- *     description: Updates an existing product including image upload
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Product ID
- *         schema:
- *           type: string
- *           example: 6855ab23c8d9f12345678901
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               productName:
- *                 type: string
- *                 description: Product name
- *                 example: Samsung Galaxy S24
- *               productPrice:
- *                 type: number
- *                 description: Product price
- *                 example: 1200000
- *               productDescription:
- *                 type: string
- *                 description: Product description
- *                 example: Latest Samsung smartphone
- *               productCategory:
- *                 type: string
- *                 description: Product category
- *                 example: Electronics
- *               productQuantity:
- *                 type: number
- *                 description: Product quantity
- *                 example: 15
- *               productImage:
- *                 type: string
- *                 format: binary
- *                 description: Product image
- *     responses:
- *       200:
- *         description: Product updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Product updated
- *                 data:
- *                   type: object
- *                   properties:
- *                     productName:
- *                       type: string
- *                       example: Samsung Galaxy S24
- *                     productPrice:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example:
+ *                         - https://res.cloudinary.com/demo/image/upload/freepods.jpg
+ *                     productRating:
  *                       type: number
- *                       example: 1200000
- *                     productDescription:
- *                       type: string
- *                       example: Latest Samsung smartphone
- *                     productCategory:
- *                       type: string
- *                       example: Electronics
- *                     productQuantity:
- *                       type: number
- *                       example: 15
- *                     productImage:
- *                       type: string
- *                       example: uploads/samsung.jpg
+ *                       example: 4.7
+ *                     isFeatured:
+ *                       type: boolean
+ *                       example: false
  *       404:
  *         description: Product not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Product not found
  *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Something went wrong
+ *         description: Server error
  */
-router.put('/update-product/:id', upload.fields([{ name: 'images', maxCount: 3 }]), updateProduct)
-// deleteProduct
-/**
- * @swagger
- * /api/v1/product/delete-product/{id}:
- *   delete:
- *     tags:
- *       - Product
- *     summary: Delete a product
- *     description: Deletes a product from the database using its ID
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Product ID
- *         schema:
- *           type: string
- *           example: 6855ab23c8d9f12345678901
- *     responses:
- *       200:
- *         description: Product deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Product deleted
- *       404:
- *         description: Product not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Product not found
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Something went wrong
- */
-router.delete('/delete-product/:id', deleteProduct)
+router.get('/get-one-product/:id', getOneProduct);
+
+router.put('/update-product/:id', upload.fields([{ name: 'image', maxCount: 3 }]), updateProduct);
+router.delete('/delete-product/:id', deleteProduct);
 
 module.exports = router;
