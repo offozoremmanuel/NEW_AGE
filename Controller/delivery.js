@@ -56,7 +56,7 @@ exports.createDelivery = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -74,7 +74,7 @@ exports.getAllDeliveries = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -100,7 +100,7 @@ exports.getOneDelivery = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -134,7 +134,7 @@ exports.updateDeliveryStatus = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };

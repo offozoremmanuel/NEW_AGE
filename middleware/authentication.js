@@ -15,7 +15,7 @@ const checkLogin = async(req, res, next)=>{
     } catch (error) {
         console.log(error.message || error)
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         }) 
     }
 }

@@ -38,7 +38,7 @@ exports.createCategory = async (req, res) => {
 
         res.status(500).json({
 
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -60,7 +60,7 @@ exports.getAllCategories = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -84,7 +84,7 @@ exports.getOneCategory = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -116,7 +116,7 @@ exports.updateCategory = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -147,7 +147,7 @@ exports.deleteCategory = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };

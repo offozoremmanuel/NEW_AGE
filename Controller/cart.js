@@ -24,9 +24,9 @@ exports.addToCart = async (req, res) => {
         if (cartItemExist) {
             cartItemExist.quantity += quantity;
             cartItemExist.totalPrice =
-                cartItemExist.quantity * product.price;
+                cartItemExist.quantity * product.productPrice;
 
-            await cartItemExist.save();
+            // await cartItemExist.save();
 
             return res.status(200).json({
                 message: 'Item already in cart, quantity updated',
@@ -41,19 +41,18 @@ exports.addToCart = async (req, res) => {
             productId,
             quantity,
 
-            totalPrice: quantity * product.price
+            totalPrice: quantity * product.productPrice
         });
 
         res.status(201).json({
             message: 'Product added to cart',
             data: cartItem
         });
-
     } catch (error) {
         console.log(error.message || error);
 
         res.status(500).json({
-            message: 'something went wrong'
+           error: error.message
         });
     }
 };

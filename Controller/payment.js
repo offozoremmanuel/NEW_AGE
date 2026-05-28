@@ -86,7 +86,7 @@ exports.initializePayment = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -136,7 +136,7 @@ exports.verifyPayment = async (req, res) => {
     } catch (error) {
         console.log(error.message || error);
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
