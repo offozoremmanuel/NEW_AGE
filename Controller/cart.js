@@ -26,7 +26,7 @@ exports.addToCart = async (req, res) => {
             cartItemExist.totalPrice =
                 cartItemExist.quantity * product.productPrice;
 
-            // await cartItemExist.save();
+            await cartItemExist.save();
 
             return res.status(200).json({
                 message: 'Item already in cart, quantity updated',
