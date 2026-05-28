@@ -10,17 +10,113 @@ const {
     deleteProduct
 } = require('../controller/product');
 
+const upload = require('../middleware/multer')
+
+const { createProduct, getAllProducts, getOneProduct, updateProduct, deleteProduct } = require('../Controller/product')
+// Tags
 /**
  * @swagger
  * tags:
  *   name: Product
- *   description: API endpoints for products
+ *   description: API endpoints for user management
  */
-
-router.post('/register', upload.fields([{ name: 'image', maxCount: 3 }]), createProduct);
-
-router.post('/category/:category/register', upload.fields([{ name: 'image', maxCount: 3 }]), createProductByCategory);
-
+// create product
+/**
+ * @swagger
+ * /api/v1/product/register:
+ *   post:
+ *     tags:
+ *       - Product
+ *     summary: Create a new product
+ *     description: Creates a new product with image upload using multer
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - productName
+ *               - productPrice
+ *               - productDescription
+ *               - productCategory
+ *               - productQuantity
+ *               - productImage
+ *             properties:
+ *               productName:
+ *                 type: string
+ *                 description: Product name
+ *                 example: iPhone 15 Pro Max
+ *               productPrice:
+ *                 type: number
+ *                 description: Product price
+ *                 example: 1500000
+ *               productDescription:
+ *                 type: string
+ *                 description: Product description
+ *                 example: Latest Apple smartphone with advanced features
+ *               productCategory:
+ *                 type: string
+ *                 description: Product category
+ *                 example: Electronics
+ *               productQuantity:
+ *                 type: number
+ *                 description: Available product quantity
+ *                 example: 10
+ *               productImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Product image file
+ *     responses:
+ *       201:
+ *         description: Product created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Product created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 6855ab23c8d9f12345678901
+ *                     productName:
+ *                       type: string
+ *                       example: iPhone 15 Pro Max
+ *                     productPrice:
+ *                       type: number
+ *                       example: 1500000
+ *                     productDescription:
+ *                       type: string
+ *                       example: Latest Apple smartphone with advanced features
+ *                     productCategory:
+ *                       type: string
+ *                       example: Electronics
+ *                     productQuantity:
+ *                       type: number
+ *                       example: 10
+ *                     productImage:
+ *                       type: string
+ *                       example: uploads/iphone.jpg
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong
+ */
+router.post('/register', upload.fields([{ name: 'images', maxCount: 3 }]), createProduct);
+// getAllProducts
 /**
  * @swagger
  * /api/v1/product/get-all-products:

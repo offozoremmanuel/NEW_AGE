@@ -236,12 +236,12 @@ router.post('/login', loginValidator, loginCustomer);
  *       500:
  *         description: Server error
  */
-router.put('/update-profile/:id', upload.single('profilePicture'), updateCustomerProfile)
+router.put('/update-profile/:id',upload.single('profilePicture'), updateCustomerProfile)
 
 // Start Google authentication
 /**
  * @swagger
- * /api/v1/customer/auth/google:
+ * /api/v1/customer/collect:
  *   get:
  *     tags:
  *       - Customer
@@ -252,11 +252,11 @@ router.put('/update-profile/:id', upload.single('profilePicture'), updateCustome
  *       302:
  *         description: Redirects to Google OAuth consent screen
  */
-router.get('/auth/google', profile)
+router.get('/collect', passport.authenticate('google', {scope: ['profile', 'email']}))
 // Google authentication callback
 /**
  * @swagger
- * /api/v1/customer/auth/google/callback:
+ * /api/v1/customer/googleLogin:
  *   get:
  *     tags:
  *       - Customer
@@ -307,7 +307,19 @@ router.get('/auth/google', profile)
  *                   type: string
  *                   example: something went wrong
  */
-router.get('/auth/google/callback', loginProfile, loginWithGoogle)
+router.get('/auth/google/callback', passport.authenticate('google', {
+    successRedirect: '/api/v1/customer/loginsuccess', 
+    failureRedirect: '/api/v1/customer/loginfailed'
+}))
+
+    router.get('/loginsuccess', (req, res) => {
+        res.json({message: 'Login successful', 
+            data: req.user})
+    })
+
+router.get('/loginfailed', (req, res) => {
+        res.json({message: 'Login failed'})
+    })
 // forgot password
 /**
  * @swagger

@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const PORT = process.env.PORT || 6677;
+const passport =require('passport')
 const customerRoute = require('./routes/customer');
 const orderRouter = require('./routes/order')
 const axios = require('axios');
@@ -10,7 +11,7 @@ const categoryRoutes = require('./routes/category')
 const cart = require('./routes/cart')
 const paymentRoutes = require('./routes/payment')
 const deliveryRoutes = require('./routes/delivery')
-const {passport} = require('./middleware/passport')
+require('./middleware/passport')
 const expressSession = require('express-session')
 
 
@@ -84,7 +85,7 @@ const swaggerDefinition = {
 
     servers: [
     {
-      url: 'https://new-age-3mtc.onrender.com',
+      url: 'https://new-age-59we.onrender.com',
       description: 'hosted Development server',
     },
     {
@@ -144,12 +145,13 @@ mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
     console.log('Database connected successfully');
 
+  app.listen(PORT, ()=> {
+    console.log(`Server listening to Port: ${PORT}`);
+})
     
 })
 .catch((error) => {
     console.log(error.message);
     
 })
-    app.listen(PORT, ()=> {
-    console.log(`Server listening to Port: ${PORT}`);
-})
+    
