@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { upload } = require('../middleware/multer');
 
-const { createCategory, getAllCategories, getOneCategory, updateCategory, deleteCategory} = require('../Controller/category');
+const { createCategory, getAllCategories, getOneCategory, updateCategory, deleteCategory} = require('../controller/category');
 /**
  * @swagger
  * tags:
