@@ -54,8 +54,9 @@ exports.createDelivery = async (req, res) => {
             data: delivery
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -71,8 +72,9 @@ exports.getAllDeliveries = async (req, res) => {
             data: deliveries
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -96,8 +98,9 @@ exports.getOneDelivery = async (req, res) => {
             data: delivery
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -129,8 +132,9 @@ exports.updateDeliveryStatus = async (req, res) => {
             data: delivery
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };

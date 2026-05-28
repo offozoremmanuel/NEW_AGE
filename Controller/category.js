@@ -35,10 +35,11 @@ exports.createCategory = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error.message || error);
 
         res.status(500).json({
 
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -58,8 +59,9 @@ exports.getAllCategories = async (req, res) => {
             data: categories
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -81,8 +83,9 @@ exports.getOneCategory = async (req, res) => {
             data: category
         });
     } catch (error) {
-    res.status(500).json({
-            message: error.message
+        console.log(error.message || error);
+        res.status(500).json({
+            message: 'something went wrong'
         });
     }
 };
@@ -112,8 +115,9 @@ exports.updateCategory = async (req, res) => {
             data: updatedCategory
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -142,8 +146,9 @@ exports.deleteCategory = async (req, res) => {
             'Category deleted successfully'
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };

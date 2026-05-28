@@ -130,8 +130,9 @@ app.use((req, res, next) => {
 })
 
 app.use((error, req, res, next) => {
+    console.log(error.message || error)
     res.status(error.statusCode || 500).json({
-        message: error.message,
+        message: 'something went wrong',
         status: error.statusCode || 500
     })
 })
