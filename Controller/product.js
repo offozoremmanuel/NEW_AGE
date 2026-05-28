@@ -65,7 +65,7 @@ exports.createProduct = async (req, res) => {
             productCategory: category,
             productBrand,
             productQuantity,
-            productImage,
+            productImage:imageFiles.length > 0 ? productImage : undefined,
             publicImagesId: imagePublicIds,
             productRating,
             isFeatured
@@ -76,8 +76,9 @@ exports.createProduct = async (req, res) => {
             data: product
         });
     } catch (error) {
+        console.log(error );
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -116,8 +117,9 @@ exports.getAllProducts = async (req, res) => {
             data: allProducts
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -141,8 +143,9 @@ exports.getProductsByCategory = async (req, res) => {
             data: products
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -163,8 +166,9 @@ exports.getOneProduct = async (req, res) => {
             data: product
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -217,8 +221,9 @@ exports.updateProduct = async (req, res) => {
             data: product
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -244,8 +249,9 @@ exports.deleteProduct = async (req, res) => {
             message: 'Product deleted'
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };

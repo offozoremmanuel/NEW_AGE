@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { addToCart } = require('../Controller/cart');
+const { addToCart } = require('../controller/cart');
 /**
  * @swagger
  * tags:

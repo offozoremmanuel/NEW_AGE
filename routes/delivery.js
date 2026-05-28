@@ -4,7 +4,7 @@ const {
     getAllDeliveries,
     getOneDelivery,
     updateDeliveryStatus
-} = require('../Controller/delivery');
+} = require('../controller/delivery');
 
 /**
  * @swagger

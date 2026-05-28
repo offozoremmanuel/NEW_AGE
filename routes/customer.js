@@ -241,7 +241,7 @@ router.put('/update-profile/:id',upload.single('profilePicture'), updateCustomer
 // Start Google authentication
 /**
  * @swagger
- * /api/v1/customer/collect:
+ * /api/v1/customer/auth/google:
  *   get:
  *     tags:
  *       - Customer
@@ -252,11 +252,11 @@ router.put('/update-profile/:id',upload.single('profilePicture'), updateCustomer
  *       302:
  *         description: Redirects to Google OAuth consent screen
  */
-router.get('/collect', passport.authenticate('google', {scope: ['profile', 'email']}))
+router.get('/auth/google', profile)
 // Google authentication callback
 /**
  * @swagger
- * /api/v1/customer/googleLogin:
+ * /api/v1/customer/auth/google/callback:
  *   get:
  *     tags:
  *       - Customer
@@ -307,10 +307,7 @@ router.get('/collect', passport.authenticate('google', {scope: ['profile', 'emai
  *                   type: string
  *                   example: something went wrong
  */
-router.get('/auth/google/callback', passport.authenticate('google', {
-    successRedirect: '/api/v1/customer/loginsuccess', 
-    failureRedirect: '/api/v1/customer/loginfailed'
-}))
+router.get('/auth/google/callback', loginProfile, loginWithGoogle)
 
     router.get('/loginsuccess', (req, res) => {
         res.json({message: 'Login successful', 
