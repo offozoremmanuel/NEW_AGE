@@ -84,8 +84,9 @@ exports.initializePayment = async (req, res) => {
             paymentLink: payment.checkoutUrl
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -133,8 +134,9 @@ exports.verifyPayment = async (req, res) => {
             data: payment
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };

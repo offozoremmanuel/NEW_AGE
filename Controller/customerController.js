@@ -36,7 +36,7 @@ if (existingCustomer) {
         })
 
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message || error)
         res.status(500).json({
             message: 'something went wrong',
         })
@@ -89,7 +89,7 @@ exports.loginCustomer = async (req, res) => {
             token
         })
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message || error)
         res.status(500).json({
             message: 'something went wrong',
         })
@@ -114,7 +114,7 @@ exports.loginWithGoogle = async (req, res) => {
             token
         })
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message || error)
         res.status(500).json({
             message: 'something went wrong',
         })
@@ -151,9 +151,9 @@ exports.forgetPassword = async (req, res) => {
             message: 'OTP sent successfully'
         })
     } catch (error) {
-        console.log(error)
+        console.log(error.message || error)
         res.status(500).json({
-            message: 'Something went wrong'
+            message: 'something went wrong'
         })
     }
 }
@@ -186,9 +186,9 @@ exports.resetPassword = async (req, res) => {
             message: 'Password reset successfully'
         })
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message || error)
         res.status(500).json({
-            message: 'Something went wrong'
+            message: 'something went wrong'
         })
     }
 }
@@ -229,8 +229,9 @@ exports.updateCustomerProfile = async (req, res) =>{
             customer: updatedCustomer
         })
     } catch (error) {
+        console.log(error.message || error)
         res.status(500).json({
-            message: 'Something went wrong'
+            message: 'something went wrong'
         })
     } finally {
         if (filePath && fs.existsSync(filePath)) {

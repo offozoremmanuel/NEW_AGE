@@ -2,7 +2,9 @@ const Category = require('../models/category');
 const fs = require('fs')
 exports.createCategory = async (req, res) => {
     try {
-        const { categoryName } = req.body;
+
+        const categoryName = req.body.categoryName?.toLowerCase();
+
         const existingCategory =
             await Category.findOne({
                 categoryName
@@ -32,10 +34,11 @@ exports.createCategory = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error.message || error);
 
         res.status(500).json({
 
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -55,8 +58,9 @@ exports.getAllCategories = async (req, res) => {
             data: categories
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -78,8 +82,9 @@ exports.getOneCategory = async (req, res) => {
             data: category
         });
     } catch (error) {
-    res.status(500).json({
-            message: error.message
+        console.log(error.message || error);
+        res.status(500).json({
+            message: 'something went wrong'
         });
     }
 };
@@ -91,9 +96,12 @@ exports.updateCategory = async (req, res) => {
             await Category.findByIdAndUpdate( id,{
 
                     categoryName:
-                    req.body.categoryName,
+                    req.body.categoryName?.toLowerCase(),
 
-                    categoryImage: req.file ? req.file.path :undefined }, { new: true });
+                    categoryImage: req.file ? req.file.path :undefined }, {
+                        new: true,
+                        runValidators: true
+                    });
         if (!updatedCategory) {
             return res.status(404).json({
                 message:
@@ -106,8 +114,9 @@ exports.updateCategory = async (req, res) => {
             data: updatedCategory
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
@@ -136,8 +145,9 @@ exports.deleteCategory = async (req, res) => {
             'Category deleted successfully'
         });
     } catch (error) {
+        console.log(error.message || error);
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };

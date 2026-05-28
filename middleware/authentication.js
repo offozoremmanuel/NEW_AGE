@@ -13,9 +13,9 @@ const checkLogin = async(req, res, next)=>{
         req.user = validToken
         next()
     } catch (error) {
-        console.log(error)
+        console.log(error.message || error)
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         }) 
     }
 }

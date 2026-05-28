@@ -50,9 +50,10 @@ exports.addToCart = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error.message || error);
 
         res.status(500).json({
-            message: error.message
+            message: 'something went wrong'
         });
     }
 };
