@@ -42,7 +42,7 @@ app.use((err, req, res,next) => {
      }
     console.log(err.message)
     res.status(500).json({
-        message: 'something went wrong'
+        message: error.message
      })
 })
 
@@ -133,7 +133,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
     console.log(error.message || error)
     res.status(error.statusCode || 500).json({
-        message: 'something went wrong',
+        message: error.message,
         status: error.statusCode || 500
     })
 })

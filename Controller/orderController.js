@@ -115,7 +115,7 @@ exports.createOrder = async (req, res) => {
         console.log(error.message || error);
 
         res.status(500).json({
-            message: 'something went wrong'
+            message: error.message
         });
     }
 };
@@ -170,7 +170,7 @@ exports.verifyPayment = async (req, res, next) => {
     } catch (error) {
         console.log(error.message || error);
         next({
-                message: 'something went wrong',
+                message: error.message,
                 statusCode: 500
             })
     }
