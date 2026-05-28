@@ -8,7 +8,7 @@ const {
     getOneProduct,
     updateProduct,
     deleteProduct
-} = require('../controller/product');
+} = require('../Controller/product');
 
 /**
  * @swagger
