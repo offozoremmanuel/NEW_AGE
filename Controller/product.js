@@ -44,7 +44,6 @@ exports.createProduct = async (req, res) => {
             productQuantity,
             productImage: productImage,
             publicImagesId: imagePublicIds,
-            productCategory
         });
         
 
