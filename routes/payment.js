@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const { initializePayment, verifyPayment } = require('../Controller/payment');
+const { initializePayment, verifyPayment } = require('../controller/payment');
+const {checkLogin} = require('../middleware/authentication')
 
 /**
  * @swagger
@@ -10,12 +11,20 @@ const { initializePayment, verifyPayment } = require('../Controller/payment');
 
 /**
  * @swagger
- * /api/v1/payment/initialize-payment:
+ * /api/v1/payment/initialize-payment/{id}:
  *   post:
  *     tags:
  *       - Payment
  *     summary: Initialize payment
- *     description: Creates a payment record from customer cart items and initializes Korapay checkout
+ *     description: Creates a payment record for the customer in the path parameter, calculates the total from the supplied cart items, and initializes Korapay checkout.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Customer ID
+ *         example: 6855e0c8b7f5a2a0fbc12345
  *     requestBody:
  *       required: true
  *       content:
@@ -23,27 +32,23 @@ const { initializePayment, verifyPayment } = require('../Controller/payment');
  *           schema:
  *             type: object
  *             required:
- *               - customerId
  *               - email
  *               - cartItems
  *             properties:
- *               customerId:
- *                 type: string
- *                 description: Customer ID
- *                 example: 6855e0c8b7f5a2a0fbc12345
  *               email:
  *                 type: string
  *                 format: email
  *                 description: Customer email address
  *                 example: johndoe@gmail.com
  *               cartItems:
- *                 type: array
- *                 description: List of cart item IDs to pay for
- *                 items:
- *                   type: string
+ *                 oneOf:
+ *                   - type: string
+ *                   - type: array
+ *                     items:
+ *                       type: string
+ *                 description: One cart item ID or a list of cart item IDs to pay for
  *                 example:
  *                   - 6855ab23c8d9f12345678901
- *                   - 6855ab23c8d9f12345678902
  *     responses:
  *       201:
  *         description: Payment initialized successfully
@@ -61,6 +66,10 @@ const { initializePayment, verifyPayment } = require('../Controller/payment');
  *                     customerId:
  *                       type: string
  *                       example: 6855e0c8b7f5a2a0fbc12345
+ *                     _id:
+ *                       type: string
+ *                       description: Payment ID used to verify the payment
+ *                       example: 6860c9d9c8d9f12345678901
  *                     cartItems:
  *                       type: array
  *                       items:
@@ -75,7 +84,7 @@ const { initializePayment, verifyPayment } = require('../Controller/payment');
  *                       example: NGN
  *                     reference:
  *                       type: string
- *                       example: PAY-1779710000000-1234567890
+ *                       example: PAY-NEW-AGE1779710000000-AB12345678
  *                     paymentProvider:
  *                       type: string
  *                       example: korapay
@@ -98,7 +107,7 @@ const { initializePayment, verifyPayment } = require('../Controller/payment');
  *               properties:
  *                 message:
  *                   type: string
- *                   example: customerId, email, and cartItems are required
+ *                   example: email and cartItems are required
  *       404:
  *         description: Customer or cart item was not found
  *         content:
@@ -108,31 +117,31 @@ const { initializePayment, verifyPayment } = require('../Controller/payment');
  *               properties:
  *                 message:
  *                   type: string
- *                   example: One or more cart items were not found
+ *                   example: Customer not found
  *       500:
  *         description: Server error
  */
-router.post('/initialize-payment', initializePayment);
+router.post('/initialize-payment/:id', checkLogin, initializePayment);
 
 /**
  * @swagger
- * /api/v1/payment/verify-payment:
+ * /api/v1/payment/verify-payment/{id}:
  *   get:
  *     tags:
  *       - Payment
  *     summary: Verify payment
- *     description: Verifies a Korapay payment using the payment reference and updates the saved payment status
+ *     description: Verifies a Korapay payment using the payment ID in the path parameter. The saved payment reference is used internally to check Korapay, then the payment status is updated.
  *     parameters:
- *       - in: query
- *         name: reference
+ *       - in: path
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Payment reference returned when payment was initialized
- *         example: PAY-1779710000000-1234567890
+ *         description: Payment ID
+ *         example: 6855e0c8b7f5a2a0fbc12345
  *     responses:
  *       200:
- *         description: Payment verification completed
+ *         description: Payment verification completed. The message depends on the Korapay status.
  *         content:
  *           application/json:
  *             schema:
@@ -140,7 +149,12 @@ router.post('/initialize-payment', initializePayment);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Payment verification completed
+ *                   enum:
+ *                     - Payment successful
+ *                     - Payment is processing
+ *                     - Payment failed
+ *                     - Unable to verify payment
+ *                   example: Payment successful
  *                 status:
  *                   type: string
  *                   enum: [processing, successful, failed]
@@ -150,7 +164,7 @@ router.post('/initialize-payment', initializePayment);
  *                   properties:
  *                     reference:
  *                       type: string
- *                       example: PAY-1779710000000-1234567890
+ *                       example: PAY-NEW-AGE1779710000000-AB12345678
  *                     amount:
  *                       type: number
  *                       example: 25000
@@ -159,9 +173,10 @@ router.post('/initialize-payment', initializePayment);
  *                       example: NGN
  *                     status:
  *                       type: string
+ *                       enum: [processing, successful, failed]
  *                       example: successful
  *       400:
- *         description: Payment reference is missing
+ *         description: Payment ID is missing
  *         content:
  *           application/json:
  *             schema:
@@ -169,7 +184,7 @@ router.post('/initialize-payment', initializePayment);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Payment reference is required
+ *                   example: Payment ID is required
  *       404:
  *         description: Payment was not found
  *         content:
@@ -183,6 +198,6 @@ router.post('/initialize-payment', initializePayment);
  *       500:
  *         description: Server error
  */
-router.get('/verify-payment', verifyPayment);
+router.get('/verify-payment/:id',checkLogin, verifyPayment);
 
 module.exports = router;
